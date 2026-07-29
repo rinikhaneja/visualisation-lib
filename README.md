@@ -2,6 +2,37 @@
 
 A project organised with the [Cookiecutter Data Science](https://cookiecutter-data-science.drivendata.org/) layout.
 
+## Plots
+
+Plot functions live in `src/viz_lib/`. They share one contract: tidy data plus
+role keywords, an optional `ax` for composition, and a returned matplotlib
+object. A single theme (`viz_lib.theme`) gives every plot one identity using a
+validated, colorblind-safe palette.
+
+### `split_panel_line`
+
+Draws one metric across several series split into panels, each with its own
+y-scale — the honest way to show series whose magnitudes differ by 10×+ without
+a misread-prone log axis.
+
+```python
+from viz_lib import split_panel_line
+
+fig = split_panel_line(
+    x=years,
+    series={"Qatar": [...], "United States": [...], "India": [...]},
+    panels={
+        "Oil exporters":  ["Qatar", "Kuwait"],
+        "Major economies": ["United States", "India"],
+    },
+    x_label="Year",
+    y_label="Tonnes CO₂ per capita",
+)
+fig.savefig("reports/figures/co2_split_panel.png", dpi=150, bbox_inches="tight")
+```
+
+See `notebooks/example_split_panel.py` for a runnable example.
+
 ## Project structure
 
 ```

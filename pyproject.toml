@@ -9,7 +9,10 @@ description = "A visualisation library organised with the Cookiecutter Data Scie
 readme = "README.md"
 requires-python = ">=3.9"
 license = { text = "MIT" }
-dependencies = []
+dependencies = [
+    "matplotlib>=3.5",
+    "numpy>=1.21",
+]
 
 [project.optional-dependencies]
 dev = [

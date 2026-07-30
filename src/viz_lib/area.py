@@ -83,6 +83,15 @@ def stacked_area(
     top = np.sum(stacks, axis=0).max()
     ax.set_ylim(0, top * 1.02)
 
+    # always mark the final year (e.g. 2024) as a tick, like the OWID charts
+    ticks = [t for t in ax.get_xticks() if xv.min() <= t <= xv.max()]
+    if not ticks or xv.max() - ticks[-1] > 6:
+        ticks.append(xv.max())
+    else:
+        ticks[-1] = xv.max()  # snap a too-close tick onto the exact end
+    ax.set_xticks(ticks)
+    ax.set_xticklabels([f"{int(t)}" for t in ticks])
+
     # direct band labels at the right end, nudged apart if they collide
     if direct_labels:
         cum = np.cumsum(stacks, axis=0)

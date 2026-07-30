@@ -12,10 +12,20 @@ black & white and for colorblind readers.
 from __future__ import annotations
 
 import matplotlib.pyplot as plt
+import matplotlib.colors as mcolors
+from matplotlib.patches import Patch
 
-from .theme import apply_theme, smog_color
+from .theme import apply_theme, smog_color, series_color
 
 _UP, _DOWN = "▲", "▼"  # ▲ ▼
+_SURFACE = "#fcfcfb"
+
+
+def _readable_ink(color) -> str:
+    """Pick black or white text for a filled segment by its luminance."""
+    r, g, b = mcolors.to_rgb(color)
+    lum = 0.299 * r + 0.587 * g + 0.114 * b
+    return "#0b0b0b" if lum > 0.6 else "#ffffff"
 
 
 def ranked_bar(
@@ -149,6 +159,137 @@ def ranked_bar(
         ax.annotate(note, xy=(0, 0), xycoords="axes fraction",
                     xytext=(0, -26), textcoords="offset points",
                     ha="left", va="top", fontsize=8.5, color="#898781")
+
+    if owns_fig:
+        fig.tight_layout()
+    return fig
+
+
+def stacked_bar(
+    df,
+    category: str,
+    segments: list[str],
+    *,
+    colors=None,
+    ascending: bool = False,
+    unit: str = "",
+    value_fmt: str = "{:.0f}",
+    seg_label_min: float = 0.08,
+    title: str | None = None,
+    subtitle: str | None = None,
+    note: str | None = None,
+    legend: bool = True,
+    ax=None,
+    figsize: tuple[float, float] | None = None,
+):
+    """Draw a ranked, stacked horizontal bar chart from a pandas DataFrame.
+
+    Each row is one category (e.g. a country); ``segments`` are the columns
+    that stack into its total. Rows are ordered by total, the total is labelled
+    at the bar end, and wide-enough segments are labelled in place — the same
+    idea as the Our World in Data "by source" charts.
+
+    Parameters
+    ----------
+    df
+        A pandas DataFrame, one row per category.
+    category
+        Column holding the row label per bar.
+    segments
+        Columns to stack, left-to-right. Missing values count as zero.
+    colors
+        ``None`` assigns the categorical palette in order (segments are
+        categories — identity, not magnitude), or a dict of overrides.
+    ascending
+        Sort direction by total; default puts the largest total on top.
+    unit, value_fmt
+        Unit suffix and number format for the labels.
+    seg_label_min
+        Only label a segment in place if it is at least this fraction of the
+        largest row total (keeps small slivers uncluttered).
+    title, subtitle, note
+        Takeaway title, quiet subtitle, and source note.
+    legend
+        Draw a segment legend above the plot (default True).
+    ax, figsize
+        Optional target Axes and figure size (height auto-scales with rows).
+
+    Returns
+    -------
+    matplotlib.figure.Figure
+    """
+    apply_theme()
+
+    data = df[[category] + segments].copy()
+    for s in segments:
+        data[s] = data[s].fillna(0.0)
+    data["_total"] = data[segments].sum(axis=1)
+    data = data.sort_values("_total", ascending=ascending).reset_index(drop=True)
+    n = len(data)
+    if n == 0:
+        raise ValueError("no rows to plot")
+
+    overrides = dict(colors) if isinstance(colors, dict) else {}
+    seg_colors = {s: overrides.get(s, series_color(i)) for i, s in enumerate(segments)}
+
+    owns_fig = ax is None
+    if owns_fig:
+        if figsize is None:
+            figsize = (9.0, 0.55 * n + 2.0)
+        fig, ax = plt.subplots(figsize=figsize)
+    else:
+        fig = ax.figure
+
+    y = list(range(n))[::-1]
+    max_total = float(data["_total"].max())
+    label_floor = max_total * seg_label_min
+
+    for yi, (_, row) in zip(y, data.iterrows()):
+        left = 0.0
+        for s in segments:
+            w = float(row[s])
+            if w <= 0:
+                continue
+            color = seg_colors[s]
+            ax.barh(yi, w, left=left, height=0.7, color=color, zorder=3,
+                    edgecolor=_SURFACE, linewidth=1.0)
+            if w >= label_floor:  # label only segments wide enough to fit
+                ax.annotate(value_fmt.format(w), xy=(left + w / 2, yi),
+                            ha="center", va="center", fontsize=9.5,
+                            fontweight="bold", color=_readable_ink(color), zorder=4)
+            left += w
+        # total at the bar end
+        ax.annotate(f"{value_fmt.format(left)}{(' ' + unit) if unit else ''}",
+                    xy=(left, yi), xytext=(6, 0), textcoords="offset points",
+                    va="center", ha="left", fontsize=11, fontweight="bold",
+                    color="#0b0b0b")
+
+    ax.set_xlim(0, max_total * 1.16)
+    ax.set_ylim(-0.8, n - 1 + (1.4 if legend else 0.7))
+    ax.set_yticks(y)
+    ax.set_yticklabels(data[category].tolist(), fontsize=11)
+    ax.set_xticks([])
+    for side in ("top", "right", "bottom", "left"):
+        ax.spines[side].set_visible(False)
+    ax.grid(False)
+    ax.tick_params(length=0)
+
+    if legend:
+        handles = [Patch(facecolor=seg_colors[s], label=s) for s in segments]
+        ax.legend(handles=handles, loc="lower left", bbox_to_anchor=(0, 1.0),
+                  ncol=min(len(segments), 6), frameon=False, fontsize=9.5,
+                  handlelength=1.1, columnspacing=1.4, borderaxespad=0)
+
+    if title:
+        ax.set_title(title, loc="left", fontsize=15, fontweight="bold", pad=44)
+    if subtitle:
+        ax.annotate(subtitle, xy=(0, 1.0), xycoords="axes fraction",
+                    xytext=(0, 26), textcoords="offset points", ha="left",
+                    va="bottom", fontsize=11, color="#52514e")
+    if note:
+        ax.annotate(note, xy=(0, 0), xycoords="axes fraction", xytext=(0, -26),
+                    textcoords="offset points", ha="left", va="top",
+                    fontsize=8.5, color="#898781")
 
     if owns_fig:
         fig.tight_layout()

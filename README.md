@@ -3,14 +3,20 @@
 A small, importable plotting library, organised with the
 [Cookiecutter Data Science](https://cookiecutter-data-science.drivendata.org/) layout.
 
-- **Install name** (pip / PyPI): `visualisation-lib`
+- **Install name** (pip / PyPI): `viz-lib`
 - **Import name** (in Python): `viz_lib`
+
+(As with any package, the install name uses a hyphen and the import name uses
+an underscore — `pip install viz-lib`, then `import viz_lib`.)
 
 ## Install
 
 ```bash
 # from a local checkout (editable, for development)
 pip install -e .
+
+# once published
+pip install viz-lib
 ```
 
 ## Use

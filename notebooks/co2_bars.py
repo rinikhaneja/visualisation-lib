@@ -36,7 +36,7 @@ ECON = ["United States", "Russia", "North America", "China",
 
 def load_wide(csv: Path) -> pd.DataFrame:
     """Return one row per entity with the LATEST and PRIOR year as columns."""
-    df = df_raw = pd.read_csv(csv)
+    df = pd.read_csv(csv)
     df = df[df["Year"].isin([LATEST, PRIOR])]
     wide = df.pivot_table(index="Entity", columns="Year", values=VALUE)
     wide.columns = [f"y{c}" for c in wide.columns]

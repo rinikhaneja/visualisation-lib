@@ -1,6 +1,30 @@
 # visualisation-lib
 
-A project organised with the [Cookiecutter Data Science](https://cookiecutter-data-science.drivendata.org/) layout.
+A small, importable plotting library, organised with the
+[Cookiecutter Data Science](https://cookiecutter-data-science.drivendata.org/) layout.
+
+- **Install name** (pip / PyPI): `visualisation-lib`
+- **Import name** (in Python): `viz_lib`
+
+## Install
+
+```bash
+# from a local checkout (editable, for development)
+pip install -e .
+```
+
+## Use
+
+```python
+import pandas as pd
+import viz_lib as viz
+
+df = pd.read_csv("data.csv")
+viz.ranked_bar(df, category="country", value="co2_per_capita")
+```
+
+Public API: `ranked_bar`, `split_panel_line`, `stacked_area`, plus the shared
+`theme` helpers (`apply_theme`, `series_color`, `smog_color`, `PALETTE`, `SMOG`).
 
 ## Plots
 

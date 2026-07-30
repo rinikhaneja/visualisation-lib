@@ -15,6 +15,7 @@ across several series split into two (or more) panels — the honest answer to
 from .theme import PALETTE, SMOG, apply_theme, series_color, smog_color
 from .line import split_panel_line
 from .bar import ranked_bar
+from .area import stacked_area
 
 __all__ = [
     "PALETTE",
@@ -24,4 +25,5 @@ __all__ = [
     "smog_color",
     "split_panel_line",
     "ranked_bar",
+    "stacked_area",
 ]

@@ -12,6 +12,7 @@ license = { text = "MIT" }
 dependencies = [
     "matplotlib>=3.5",
     "numpy>=1.21",
+    "pandas>=1.5",
 ]
 
 [project.optional-dependencies]
@@ -22,3 +23,7 @@ dev = [
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+# ship the bundled sample datasets inside the wheel
+[tool.setuptools.package-data]
+viz_lib = ["data/*.csv"]

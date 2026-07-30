@@ -15,18 +15,17 @@ import matplotlib.pyplot as plt
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from viz_lib import ranked_bar  # noqa: E402
+from viz_lib import ranked_bar, load_dataset  # noqa: E402
 from viz_lib.theme import apply_theme, series_color  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
-RAW = ROOT / "data" / "raw"
 OUT = ROOT / "reports" / "figures"
 LATEST = 2024
 
 
 def ghg_panel() -> None:
     apply_theme()
-    df = pd.read_csv(RAW / "us_percapita_ghg.csv")
+    df = load_dataset("us_percapita_ghg")
     col = [c for c in df.columns if "greenhouse" in c.lower()][0]
     x, y = df["Year"].to_numpy(), df[col].to_numpy()
 
@@ -65,12 +64,12 @@ def ghg_panel() -> None:
 
 
 def share_panel() -> None:
-    files = {"Oil": "share_cumulative_oil.csv",
-             "Coal": "share_cumulative_coal.csv",
-             "Cement": "share_cumulative_cement.csv"}
+    names = {"Oil": "share_cumulative_oil",
+             "Coal": "share_cumulative_coal",
+             "Cement": "share_cumulative_cement"}
     rows = []
-    for fuel, name in files.items():
-        d = pd.read_csv(RAW / name)
+    for fuel, name in names.items():
+        d = load_dataset(name)
         col = [c for c in d.columns if "Share" in c][0]
         val = d[(d["Entity"] == "United States") & (d["Year"] == LATEST)][col].iloc[0]
         rows.append({"Fuel": fuel, "share": val})

@@ -20,10 +20,9 @@ import pandas as pd
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from viz_lib import ranked_bar  # noqa: E402
+from viz_lib import ranked_bar, load_dataset  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
-CSV = ROOT / "data" / "raw" / "co2_per_capita.csv"
 OUT = ROOT / "reports" / "figures"
 VALUE = "CO₂ emissions per capita"
 LATEST, PRIOR = 2024, 2014
@@ -34,9 +33,9 @@ ECON = ["United States", "Russia", "North America", "China",
         "European Union (27)", "World", "United Kingdom", "India"]
 
 
-def load_wide(csv: Path) -> pd.DataFrame:
+def load_wide() -> pd.DataFrame:
     """Return one row per entity with the LATEST and PRIOR year as columns."""
-    df = pd.read_csv(csv)
+    df = load_dataset("co2_per_capita")
     df = df[df["Year"].isin([LATEST, PRIOR])]
     wide = df.pivot_table(index="Entity", columns="Year", values=VALUE)
     wide.columns = [f"y{c}" for c in wide.columns]
@@ -48,9 +47,7 @@ def subset(wide: pd.DataFrame, names: list[str]) -> pd.DataFrame:
 
 
 def main() -> None:
-    if not CSV.exists():
-        raise SystemExit(f"missing data file: {CSV}\nDrop the OWID CSV there first.")
-    wide = load_wide(CSV)
+    wide = load_wide()
     OUT.mkdir(parents=True, exist_ok=True)
 
     # shared color scale so a shade means the same emissions in both charts

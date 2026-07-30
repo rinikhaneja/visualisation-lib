@@ -12,10 +12,9 @@ import pandas as pd
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from viz_lib import stacked_area  # noqa: E402
+from viz_lib import stacked_area, load_dataset  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
-CSV = ROOT / "data" / "raw" / "us_co2_by_fuel.csv"
 OUT = ROOT / "reports" / "figures" / "us_co2_hero.png"
 
 # bottom-to-top stacking order (coal is the historical base)
@@ -32,7 +31,7 @@ EVENTS = [
 
 
 def main() -> None:
-    df = pd.read_csv(CSV)
+    df = load_dataset("us_co2_by_fuel")
     # tonnes -> billion tonnes for readable labels
     for f in FUELS:
         df[f] = pd.to_numeric(df[f], errors="coerce") / 1e9

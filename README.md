@@ -32,6 +32,18 @@ viz.ranked_bar(df, category="country", value="co2_per_capita")
 Public API: `ranked_bar`, `split_panel_line`, `stacked_area`, plus the shared
 `theme` helpers (`apply_theme`, `series_color`, `smog_color`, `PALETTE`, `SMOG`).
 
+### Bundled datasets
+
+Sample CSVs ship **inside** the package (`viz_lib/data/`) and are read with
+`importlib.resources`, so they load whether you run from a checkout or an
+installed wheel:
+
+```python
+import viz_lib
+viz_lib.datasets.available()          # ['co2_per_capita', 'us_co2_by_fuel', ...]
+df = viz_lib.load_dataset("us_co2_by_fuel")
+```
+
 ## Plots
 
 Plot functions live in `src/viz_lib/`. They share one contract: tidy data plus

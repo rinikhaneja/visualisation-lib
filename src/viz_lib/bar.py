@@ -203,7 +203,10 @@ def stacked_bar(
     ascending
         Sort direction by total; default puts the largest total on top.
     unit, value_fmt
-        Unit suffix and number format for the labels.
+        Number format for the labels. ``value_fmt`` may be a format string
+        (``unit`` is appended) or a callable ``value -> str`` for adaptive
+        formatting (e.g. one decimal below 10, none above); with a callable,
+        ``unit`` is ignored and the callable owns the whole label.
     seg_label_min
         Only label a segment in place if it is at least this fraction of the
         largest row total (keeps small slivers uncluttered).
@@ -240,6 +243,14 @@ def stacked_bar(
     else:
         fig = ax.figure
 
+    # one formatter for both the in-segment labels and the bar-end total;
+    # pass a callable for adaptive formatting (e.g. "6.4 t" but "34 t")
+    if callable(value_fmt):
+        fmt = value_fmt
+    else:
+        def fmt(v):
+            return f"{value_fmt.format(v)}{(' ' + unit) if unit else ''}"
+
     y = list(range(n))[::-1]
     max_total = float(data["_total"].max())
     label_floor = max_total * seg_label_min
@@ -254,15 +265,14 @@ def stacked_bar(
             ax.barh(yi, w, left=left, height=0.7, color=color, zorder=3,
                     edgecolor=_SURFACE, linewidth=1.0)
             if w >= label_floor:  # label only segments wide enough to fit
-                ax.annotate(value_fmt.format(w), xy=(left + w / 2, yi),
+                ax.annotate(fmt(w), xy=(left + w / 2, yi),
                             ha="center", va="center", fontsize=9.5,
                             fontweight="bold", color=_readable_ink(color), zorder=4)
             left += w
         # total at the bar end
-        ax.annotate(f"{value_fmt.format(left)}{(' ' + unit) if unit else ''}",
-                    xy=(left, yi), xytext=(6, 0), textcoords="offset points",
-                    va="center", ha="left", fontsize=11, fontweight="bold",
-                    color="#0b0b0b")
+        ax.annotate(fmt(left), xy=(left, yi), xytext=(6, 0),
+                    textcoords="offset points", va="center", ha="left",
+                    fontsize=11, fontweight="bold", color="#0b0b0b")
 
     ax.set_xlim(0, max_total * 1.16)
     ax.set_ylim(-0.8, n - 1 + (1.4 if legend else 0.7))

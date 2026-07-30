@@ -33,6 +33,33 @@ fig.savefig("reports/figures/co2_split_panel.png", dpi=150, bbox_inches="tight")
 
 See `notebooks/example_split_panel.py` for a runnable example.
 
+### `ranked_bar`
+
+A sorted horizontal bar chart for comparing a value across items (the
+Evergreen Chart Chooser's pick for ranking with long labels). Built to the
+Data Viz Checklist: sorted by value, direct labels, no gridlines/border, a
+takeaway title, and a CO₂-themed "smog" color ramp (darker = more emissions)
+that stays legible in black & white and for colorblind readers.
+
+```python
+import pandas as pd
+from viz_lib import ranked_bar
+
+df = pd.read_csv("data/raw/co2_per_capita.csv")
+df = df[df["Year"] == 2024]
+
+fig = ranked_bar(
+    df, category="Entity", value="CO₂ emissions per capita",
+    reference=4.7, reference_label="World average",
+    title="A few small, oil-rich nations emit the most CO₂ per person",
+    subtitle="Tonnes of CO₂ per person, 2024",
+)
+```
+
+`compare="<earlier-column>"` adds a ▲/▼ change tag per bar; pass the same
+`vmax` to two charts to share one honest color scale. See
+`notebooks/co2_bars.py` for the two-group CO₂ example.
+
 ## Project structure
 
 ```

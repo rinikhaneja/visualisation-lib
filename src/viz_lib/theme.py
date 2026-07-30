@@ -13,6 +13,26 @@ from __future__ import annotations
 
 import matplotlib as mpl
 
+#: Sequential "smog / heat" ramp for CO2 magnitude: pale haze -> deep ember.
+#: Lightness decreases monotonically, so it stays legible in black & white and
+#: for colorblind readers (darker always means more emissions).
+SMOG: list[str] = ["#f4d06a", "#eaa23b", "#df6b2e", "#c0392b", "#7b1f16"]
+
+
+def smog_color(value: float, vmax: float) -> tuple:
+    """Map ``value`` (0..``vmax``) onto the SMOG ramp; returns an RGBA tuple.
+
+    Colors magnitude, not identity: hotter = more CO2 per capita. Pass the same
+    ``vmax`` to several charts so their colors share one honest scale.
+    """
+    import matplotlib.colors as mcolors
+
+    cmap = mcolors.LinearSegmentedColormap.from_list("smog", SMOG)
+    frac = 0.0 if vmax <= 0 else max(0.0, min(1.0, value / vmax))
+    # start a little into the ramp so the smallest bars aren't near-white
+    return cmap(0.12 + 0.88 * frac)
+
+
 #: Categorical palette, light surface, in fixed assignment order.
 PALETTE: list[str] = [
     "#2a78d6",  # 1 blue

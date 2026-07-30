@@ -12,12 +12,16 @@ across several series split into two (or more) panels — the honest answer to
 "some series are 30x larger than others" without resorting to a log axis.
 """
 
-from .theme import PALETTE, apply_theme, series_color
+from .theme import PALETTE, SMOG, apply_theme, series_color, smog_color
 from .line import split_panel_line
+from .bar import ranked_bar
 
 __all__ = [
     "PALETTE",
+    "SMOG",
     "apply_theme",
     "series_color",
+    "smog_color",
     "split_panel_line",
+    "ranked_bar",
 ]

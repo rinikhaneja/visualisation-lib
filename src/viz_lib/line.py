@@ -107,6 +107,7 @@ def split_panel_line(
     x_arr = np.asarray(x, dtype=float)
 
     # --- axes ---------------------------------------------------------------
+    owns_fig = ax is None
     if ax is not None:
         axes = np.atleast_1d(ax).ravel()
         if len(axes) != n:
@@ -164,7 +165,8 @@ def split_panel_line(
 
     if suptitle:
         fig.suptitle(suptitle, x=0.02, ha="left", fontsize=14, fontweight="bold")
-    fig.tight_layout()
+    if owns_fig:
+        fig.tight_layout()
     return fig
 
 

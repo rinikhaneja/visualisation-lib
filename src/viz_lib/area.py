@@ -71,7 +71,8 @@ def stacked_area(
     overrides = dict(colors) if isinstance(colors, dict) else {}
     cols = [overrides.get(s, series_color(i)) for i, s in enumerate(series)]
 
-    if ax is None:
+    owns_fig = ax is None
+    if owns_fig:
         fig, ax = plt.subplots(figsize=figsize or (11, 6))
     else:
         fig = ax.figure
@@ -138,7 +139,8 @@ def stacked_area(
                     textcoords="offset points", ha="left", va="top",
                     fontsize=8.5, color=_MUTED)
 
-    fig.tight_layout()
+    if owns_fig:
+        fig.tight_layout()
     return fig
 
 

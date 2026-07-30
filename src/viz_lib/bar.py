@@ -82,7 +82,8 @@ def ranked_bar(
 
     top = vmax if vmax is not None else max(values)
 
-    if ax is None:
+    owns_fig = ax is None
+    if owns_fig:
         if figsize is None:
             figsize = (7.6, 0.52 * n + 1.7)
         fig, ax = plt.subplots(figsize=figsize)
@@ -149,5 +150,6 @@ def ranked_bar(
                     xytext=(0, -26), textcoords="offset points",
                     ha="left", va="top", fontsize=8.5, color="#898781")
 
-    fig.tight_layout()
+    if owns_fig:
+        fig.tight_layout()
     return fig

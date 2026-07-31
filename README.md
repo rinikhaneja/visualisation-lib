@@ -29,8 +29,16 @@ df = pd.read_csv("data.csv")
 viz.ranked_bar(df, category="country", value="co2_per_capita")
 ```
 
-Public API: `ranked_bar`, `split_panel_line`, `stacked_area`, plus the shared
-`theme` helpers (`apply_theme`, `series_color`, `smog_color`, `PALETTE`, `SMOG`).
+Public API — six plotting functions plus helpers:
+
+| Function | Job | Example chart |
+| --- | --- | --- |
+| `ranked_bar` | rank a value across items | CO₂ per person by country |
+| `stacked_bar` | rank **and** break each bar into parts | per-capita CO₂ by source |
+| `stacked_area` | composition over time | US CO₂ by fuel, 1800–2024 |
+| `split_panel_line` | one metric, mixed-scale series in panels | oil exporters vs economies |
+| `load_dataset` / `datasets` | load a bundled sample CSV | — |
+| `apply_theme`, `series_color`, `smog_color`, `PALETTE`, `SMOG` | the shared look | — |
 
 ### Bundled datasets
 
@@ -102,6 +110,60 @@ fig = ranked_bar(
 `vmax` to two charts to share one honest color scale. See
 `notebooks/co2_bars.py` for the two-group CO₂ example.
 
+### `stacked_bar`
+
+A ranked, stacked horizontal bar — like `ranked_bar`, but each bar is split
+into parts (e.g. a country's emissions by fuel). Rows are ordered by total,
+the total is labelled at the bar end, and wide-enough segments are labelled in
+place. `value_fmt` accepts a callable for adaptive labels (e.g. `6.4 t` but
+`34 t`). See `notebooks/percapita_co2_by_source.py`.
+
+```python
+from viz_lib import stacked_bar, load_dataset
+
+df = load_dataset("percapita_co2_by_source")
+fig = stacked_bar(
+    df, category="Entity",
+    segments=["Coal", "Oil", "Gas", "Flaring", "Cement", "Other industry"],
+    title="Per capita CO₂ emissions by source, 2024",
+)
+```
+
+### `stacked_area`
+
+Composition over time, with direct band labels and optional dated event
+markers for an editorial "hero" chart. See `notebooks/us_co2_hero.py`.
+
+```python
+from viz_lib import stacked_area, load_dataset
+
+df = load_dataset("us_co2_by_fuel")
+fig = stacked_area(
+    df, x="Year", series=["Coal", "Oil", "Gas", "Cement", "Flaring", "Other industry"],
+    title="Coal gave way to oil and gas",
+    events=[{"year": 2007, "label": "2007\nemissions peak", "y": 0.98}],
+)
+```
+
+## Example notebooks & Colab demo
+
+Runnable examples live in `notebooks/` and `reports/`:
+
+| File | What it produces |
+| --- | --- |
+| `notebooks/co2_bars.py` | two ranked bar charts (oil producers, major economies) |
+| `notebooks/percapita_co2_by_source.py` | per-capita CO₂ by source (stacked bar) |
+| `notebooks/us_co2_hero.py` | US CO₂ by fuel over time (stacked area) |
+| `notebooks/us_supporting_panels.py` | per-capita GHG trend + cumulative-share ranking |
+| `reports/us_carbon_poster.py` | the full one-page carbon-story poster |
+
+**Colab presentation notebooks** (run one graph per cell):
+
+- `notebooks/us_carbon_story_standalone.ipynb` — fully self-contained (library
+  code + data embedded); no install or upload needed.
+- `notebooks/us_carbon_story_upload.ipynb` — installs `viz_lib` from GitHub,
+  then reads three CSVs you upload.
+
 ## Project structure
 
 ```
@@ -123,3 +185,22 @@ fig = ranked_bar(
 | `reports/figures/` | Graphics generated for write-ups and reporting.     |
 | `docs/`            | MkDocs documentation site.                          |
 | `pyproject.toml`   | Project metadata and build configuration.           |
+
+## Building & installing
+
+```bash
+pip install -e .                 # editable install for development
+python -m build                  # build a wheel into dist/ (bundles the datasets)
+pip install dist/viz_lib-*.whl   # install the built wheel
+```
+
+## Data source
+
+The bundled sample datasets are CO₂ and greenhouse-gas figures from the
+**Global Carbon Budget (2025)** via
+[Our World in Data](https://ourworldindata.org/co2-and-greenhouse-gas-emissions),
+licensed **CC BY**.
+
+## License
+
+Released under the [MIT License](LICENSE).

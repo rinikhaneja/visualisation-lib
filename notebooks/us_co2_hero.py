@@ -18,7 +18,6 @@ def main() -> None:
         df, x="Year", series=FUELS,
         y_label="Billion tonnes CO₂ per year",
         title="A century of American carbon: coal gave way to oil and gas",
-        subtitle="US CO₂ emissions by fuel or industry, 1800–2024 (billion tonnes per year)",
     )
     OUT.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(OUT, dpi=150, bbox_inches="tight")

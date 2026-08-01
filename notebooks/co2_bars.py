@@ -34,7 +34,6 @@ def main() -> None:
         subset(wide, OIL), category="Entity", value=f"y{LATEST}",
         vmax=vmax, unit="t",
         title="A few small, oil-rich nations emit the most CO₂ per person",
-        subtitle="Tonnes of CO₂ per person, 2024",
     )
     fig1.savefig(OUT / "co2_oil_producers.png", dpi=150, bbox_inches="tight")
     fig2 = ranked_bar(

@@ -29,7 +29,7 @@ df = pd.read_csv("data.csv")
 viz.ranked_bar(df, category="country", value="co2_per_capita")
 ```
 
-Public API — six plotting functions plus helpers:
+Public API — two plotting functions plus helpers:
 
 | Function | Job | Example chart |
 | --- | --- | --- |
@@ -62,8 +62,7 @@ installed wheel:
 
 ```python
 import viz_lib
-viz_lib.datasets.available()          # ['co2_per_capita', 'us_co2_by_fuel', ...]
-df = viz_lib.load_dataset("us_co2_by_fuel")
+df = viz_lib.load_dataset("us_co2_by_fuel")   # or "co2_per_capita"
 ```
 
 ## Plots
@@ -75,11 +74,9 @@ validated, colorblind-safe palette.
 
 ### `ranked_bar`
 
-A sorted horizontal bar chart for comparing a value across items (the
-Evergreen Chart Chooser's pick for ranking with long labels). Built to the
-Data Viz Checklist: sorted by value, direct labels, no gridlines/border, a
-takeaway title, and a CO₂-themed "smog" color ramp (darker = more emissions)
-that stays legible in black & white and for colorblind readers.
+A sorted horizontal bar chart for comparing a value across items. Bars are
+sorted by value with the number labelled directly at each bar end, and a
+CO₂-themed "smog" color ramp shades them (darker = more emissions).
 
 ```python
 import pandas as pd
@@ -90,20 +87,18 @@ df = df[df["Year"] == 2024]
 
 fig = ranked_bar(
     df, category="Entity", value="CO₂ emissions per capita",
-    reference=4.7, reference_label="World average",
     title="A few small, oil-rich nations emit the most CO₂ per person",
     subtitle="Tonnes of CO₂ per person, 2024",
 )
 ```
 
-`compare="<earlier-column>"` adds a ▲/▼ change tag per bar; pass the same
-`vmax` to two charts to share one honest color scale. See
-`notebooks/co2_bars.py` for the two-group CO₂ example.
+Pass the same `vmax` to two charts to share one color scale, so a shade means
+the same emissions in both. See `notebooks/co2_bars.py` for the two-group example.
 
 ### `stacked_area`
 
-Composition over time, with direct band labels and optional dated event
-markers for an editorial "hero" chart. See `notebooks/us_co2_hero.py`.
+Composition over time, with each band labelled directly at its right edge,
+for an editorial "hero" chart. See `notebooks/us_co2_hero.py`.
 
 ```python
 from viz_lib import stacked_area, load_dataset
@@ -112,13 +107,12 @@ df = load_dataset("us_co2_by_fuel")
 fig = stacked_area(
     df, x="Year", series=["Coal", "Oil", "Gas", "Cement", "Flaring", "Other industry"],
     title="Coal gave way to oil and gas",
-    events=[{"year": 2007, "label": "2007\nemissions peak", "y": 0.98}],
 )
 ```
 
 ## Example notebooks & Colab demo
 
-Runnable examples live in `notebooks/` and `reports/`:
+Runnable examples live in `notebooks/`:
 
 | File | What it produces |
 | --- | --- |

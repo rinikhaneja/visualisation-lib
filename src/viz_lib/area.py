@@ -4,7 +4,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 from .theme import apply_theme, series_color
 _MUTED = "#898781"
-_INK = "#0b0b0b"
 _SECOND = "#52514e"
 _SURFACE = "#fcfcfb"
 
@@ -18,7 +17,6 @@ def stacked_area(
     title: str | None = None,
     subtitle: str | None = None,
     note: str | None = None,
-    events: list[dict] | None = None,
     direct_labels: bool = True,
     ax=None,
     figsize: tuple[float, float] | None = None,
@@ -56,21 +54,6 @@ def stacked_area(
             bottom = cum[i - 1][-1] if i else 0.0
             centers.append(((bottom + cum[i][-1]) / 2, s, cols[i]))
         _labels_at_right(ax, xv.max(), centers, top)
-    # dated event markers (the editorial "timeline" layer)
-    x_lo, x_hi = xv.min(), xv.max()
-    near_right = x_lo + 0.85 * (x_hi - x_lo)
-    for ev in events or []:
-        yr = ev["year"]
-        ax.axvline(yr, color=_MUTED, linewidth=1.0, linestyle=(0, (2, 2)), zorder=5)
-        yfrac = ev.get("y", 0.95)
-        # flip the label to the left of its rule near the right edge, so it
-        # never lands on top of the right-hand band labels
-        right = yr >= near_right
-        ax.annotate(ev["label"], xy=(yr, top * yfrac),
-                    xytext=(-4 if right else 4, 0), textcoords="offset points",
-                    va="top", ha="right" if right else "left",
-                    fontsize=9, color=_SECOND, zorder=6,
-                    bbox=dict(boxstyle="round,pad=0.15", fc=_SURFACE, ec="none", alpha=0.85))
     # chrome: mute everything that isn't data (checklist: mute the lines)
     for side in ("top", "right"):
         ax.spines[side].set_visible(False)

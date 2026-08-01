@@ -4,7 +4,6 @@ import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 from matplotlib.patches import Patch
 from .theme import apply_theme, smog_color, series_color
-_UP, _DOWN = "▲", "▼"  # ▲ ▼
 _SURFACE = "#fcfcfb"
 
 def _readable_ink(color) -> str:
@@ -18,7 +17,6 @@ def ranked_bar(
     category: str,
     value: str,
     *,
-    compare: str | None = None,
     reference: float | None = None,
     reference_label: str | None = None,
     vmax: float | None = None,
@@ -33,7 +31,7 @@ def ranked_bar(
 ):
     """Draw a sorted horizontal bar chart from a pandas DataFrame."""
     apply_theme()
-    data = df[[category, value] + ([compare] if compare else [])].dropna(subset=[value])
+    data = df[[category, value]].dropna(subset=[value])
     data = data.sort_values(value, ascending=ascending).reset_index(drop=True)
     labels = data[category].tolist()
     values = data[value].tolist()
@@ -54,23 +52,11 @@ def ranked_bar(
         ax.barh(yi, val, height=0.68, color=smog_color(val, top), zorder=3)
     xmax = max(values + ([reference] if reference else []))
     ax.set_xlim(0, xmax * 1.16)  # head-room for end labels
-    # direct value labels (+ optional change tag) at each bar end
-    for yi, (val, row) in zip(y, zip(values, data.itertuples(index=False))):
-        label = value_fmt.format(val)
-        ax.annotate(label, xy=(val, yi), xytext=(6, 0), textcoords="offset points",
-                    va="center", ha="left", fontsize=11, fontweight="bold",
-                    color="#0b0b0b")
-        if compare:
-            prev = getattr(row, compare) if hasattr(row, compare) else None
-            if prev:
-                pct = (val - prev) / prev * 100
-                up = pct >= 0
-                tag = f"  {_UP if up else _DOWN} {abs(pct):.0f}%"
-                # up = more emissions (bad) = warm; down = good = green
-                ax.annotate(tag, xy=(val, yi), xytext=(6 + 34, 0),
-                            textcoords="offset points", va="center", ha="left",
-                            fontsize=9.5, fontweight="bold",
-                            color="#c0392b" if up else "#0a7d33")
+    # direct value label at each bar end
+    for yi, val in zip(y, values):
+        ax.annotate(value_fmt.format(val), xy=(val, yi), xytext=(6, 0),
+                    textcoords="offset points", va="center", ha="left",
+                    fontsize=11, fontweight="bold", color="#0b0b0b")
     # optional reference line for context, labelled at the baseline
     if reference is not None:
         ax.axvline(reference, color="#52514e", linestyle=(0, (4, 3)),

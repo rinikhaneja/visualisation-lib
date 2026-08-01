@@ -21,12 +21,17 @@ pip install viz-lib
 ## Use
 
 ```python
-import pandas as pd
 import viz_lib as viz
 
-df = pd.read_csv("data.csv")
-viz.ranked_bar(df, category="country", value="co2_per_capita")
+# load a bundled sample dataset (ships inside the package)
+df = viz.load_dataset("co2_per_capita")
+df = df[df["Year"] == 2024]
+
+viz.ranked_bar(df, category="Entity", value="CO₂ emissions per capita")
 ```
+
+`ranked_bar` takes any tidy DataFrame, so you can pass your own instead —
+e.g. `df = pd.read_csv("your_data.csv")`.
 
 Public API — two plotting functions plus helpers:
 

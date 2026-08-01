@@ -1,13 +1,4 @@
-"""Ranked horizontal bar chart, built to the Evergreen Data Viz Checklist.
-
-One job: take a tidy pandas DataFrame and draw a sorted, directly-labelled
-horizontal bar chart that a non-technical reader understands at a glance.
-
-Checklist choices baked in: bars sorted by value (not alphabetically), a zero
-baseline, direct value labels, no gridlines / border / redundant axis, a
-takeaway title, and a CO2-themed sequential color ramp that stays legible in
-black & white and for colorblind readers.
-"""
+"""Ranked horizontal bar chart, built to the Evergreen Data Viz Checklist."""
 
 from __future__ import annotations
 
@@ -46,42 +37,8 @@ def ranked_bar(
     ax=None,
     figsize: tuple[float, float] | None = None,
 ):
-    """Draw a sorted horizontal bar chart from a pandas DataFrame.
-
-    Parameters
-    ----------
-    df
-        A pandas DataFrame (MVP input — DataFrames only).
-    category, value
-        Column names: the label per bar and the numeric length to rank by.
-    compare
-        Optional column with an earlier value; when given, each bar gets a
-        muted ``▲ / ▼ %`` tag showing the change to ``value`` (the story of
-        who rose or fell).
-    reference, reference_label
-        Optional vertical reference line (e.g. the world average) and its
-        label — instant context for "how far above normal".
-    vmax
-        Upper bound for the color ramp. Pass the same ``vmax`` to several
-        charts so a bar of a given darkness means the same emissions in each.
-        Defaults to this chart's maximum.
-    unit
-        Unit string appended to the reference label / used in labels.
-    value_fmt
-        Format string for the value labels.
-    title, subtitle, note
-        Takeaway title, units/what-am-I-looking-at subtitle, and a source note.
-    ascending
-        Sort direction; default puts the largest bar on top.
-    ax, figsize
-        Optional target Axes and figure size (height auto-scales with bars).
-
-    Returns
-    -------
-    matplotlib.figure.Figure
-    """
+    """Draw a sorted horizontal bar chart from a pandas DataFrame."""
     apply_theme()
-
     data = df[[category, value] + ([compare] if compare else [])].dropna(subset=[value])
     data = data.sort_values(value, ascending=ascending).reset_index(drop=True)
     labels = data[category].tolist()
@@ -89,9 +46,7 @@ def ranked_bar(
     n = len(values)
     if n == 0:
         raise ValueError("no rows to plot after dropping missing values")
-
     top = vmax if vmax is not None else max(values)
-
     owns_fig = ax is None
     if owns_fig:
         if figsize is None:
@@ -99,15 +54,12 @@ def ranked_bar(
         fig, ax = plt.subplots(figsize=figsize)
     else:
         fig = ax.figure
-
     # bars top-to-bottom (largest at top when ascending=False)
     y = list(range(n))[::-1]
     for yi, val in zip(y, values):
         ax.barh(yi, val, height=0.68, color=smog_color(val, top), zorder=3)
-
     xmax = max(values + ([reference] if reference else []))
     ax.set_xlim(0, xmax * 1.16)  # head-room for end labels
-
     # direct value labels (+ optional change tag) at each bar end
     for yi, (val, row) in zip(y, zip(values, data.itertuples(index=False))):
         label = value_fmt.format(val)
@@ -125,7 +77,6 @@ def ranked_bar(
                             textcoords="offset points", va="center", ha="left",
                             fontsize=9.5, fontweight="bold",
                             color="#c0392b" if up else "#0a7d33")
-
     # optional reference line for context, labelled at the baseline
     if reference is not None:
         ax.axvline(reference, color="#52514e", linestyle=(0, (4, 3)),
@@ -136,7 +87,6 @@ def ranked_bar(
                     xytext=(4, 0), textcoords="offset points",
                     va="center", ha="left", fontsize=9.5, style="italic",
                     color="#52514e")
-
     # category labels; strip every non-data line (checklist: mute the lines)
     ax.set_yticks(y)
     ax.set_yticklabels(labels, fontsize=11)
@@ -147,7 +97,6 @@ def ranked_bar(
     ax.tick_params(length=0)
     # headroom above the top bar for the subtitle, a little below for the ref label
     ax.set_ylim(-1.1, n - 1 + 0.9)
-
     # titles: takeaway on top, quiet subtitle beneath, source note at the foot
     if title:
         ax.set_title(title, loc="left", fontsize=15, fontweight="bold", pad=24)
@@ -159,7 +108,6 @@ def ranked_bar(
         ax.annotate(note, xy=(0, 0), xycoords="axes fraction",
                     xytext=(0, -26), textcoords="offset points",
                     ha="left", va="top", fontsize=8.5, color="#898781")
-
     if owns_fig:
         fig.tight_layout()
     return fig
@@ -182,47 +130,8 @@ def stacked_bar(
     ax=None,
     figsize: tuple[float, float] | None = None,
 ):
-    """Draw a ranked, stacked horizontal bar chart from a pandas DataFrame.
-
-    Each row is one category (e.g. a country); ``segments`` are the columns
-    that stack into its total. Rows are ordered by total, the total is labelled
-    at the bar end, and wide-enough segments are labelled in place — the same
-    idea as the Our World in Data "by source" charts.
-
-    Parameters
-    ----------
-    df
-        A pandas DataFrame, one row per category.
-    category
-        Column holding the row label per bar.
-    segments
-        Columns to stack, left-to-right. Missing values count as zero.
-    colors
-        ``None`` assigns the categorical palette in order (segments are
-        categories — identity, not magnitude), or a dict of overrides.
-    ascending
-        Sort direction by total; default puts the largest total on top.
-    unit, value_fmt
-        Number format for the labels. ``value_fmt`` may be a format string
-        (``unit`` is appended) or a callable ``value -> str`` for adaptive
-        formatting (e.g. one decimal below 10, none above); with a callable,
-        ``unit`` is ignored and the callable owns the whole label.
-    seg_label_min
-        Only label a segment in place if it is at least this fraction of the
-        largest row total (keeps small slivers uncluttered).
-    title, subtitle, note
-        Takeaway title, quiet subtitle, and source note.
-    legend
-        Draw a segment legend above the plot (default True).
-    ax, figsize
-        Optional target Axes and figure size (height auto-scales with rows).
-
-    Returns
-    -------
-    matplotlib.figure.Figure
-    """
+    """Draw a ranked, stacked horizontal bar chart from a pandas DataFrame."""
     apply_theme()
-
     data = df[[category] + segments].copy()
     for s in segments:
         data[s] = data[s].fillna(0.0)
@@ -231,10 +140,8 @@ def stacked_bar(
     n = len(data)
     if n == 0:
         raise ValueError("no rows to plot")
-
     overrides = dict(colors) if isinstance(colors, dict) else {}
     seg_colors = {s: overrides.get(s, series_color(i)) for i, s in enumerate(segments)}
-
     owns_fig = ax is None
     if owns_fig:
         if figsize is None:
@@ -242,7 +149,6 @@ def stacked_bar(
         fig, ax = plt.subplots(figsize=figsize)
     else:
         fig = ax.figure
-
     # one formatter for both the in-segment labels and the bar-end total;
     # pass a callable for adaptive formatting (e.g. "6.4 t" but "34 t")
     if callable(value_fmt):
@@ -250,11 +156,9 @@ def stacked_bar(
     else:
         def fmt(v):
             return f"{value_fmt.format(v)}{(' ' + unit) if unit else ''}"
-
     y = list(range(n))[::-1]
     max_total = float(data["_total"].max())
     label_floor = max_total * seg_label_min
-
     for yi, (_, row) in zip(y, data.iterrows()):
         left = 0.0
         for s in segments:
@@ -273,7 +177,6 @@ def stacked_bar(
         ax.annotate(fmt(left), xy=(left, yi), xytext=(6, 0),
                     textcoords="offset points", va="center", ha="left",
                     fontsize=11, fontweight="bold", color="#0b0b0b")
-
     ax.set_xlim(0, max_total * 1.16)
     ax.set_ylim(-0.8, n - 1 + (1.4 if legend else 0.7))
     ax.set_yticks(y)
@@ -283,13 +186,11 @@ def stacked_bar(
         ax.spines[side].set_visible(False)
     ax.grid(False)
     ax.tick_params(length=0)
-
     if legend:
         handles = [Patch(facecolor=seg_colors[s], label=s) for s in segments]
         ax.legend(handles=handles, loc="lower left", bbox_to_anchor=(0, 1.0),
                   ncol=min(len(segments), 6), frameon=False, fontsize=9.5,
                   handlelength=1.1, columnspacing=1.4, borderaxespad=0)
-
     if title:
         ax.set_title(title, loc="left", fontsize=15, fontweight="bold", pad=44)
     if subtitle:
@@ -300,7 +201,6 @@ def stacked_bar(
         ax.annotate(note, xy=(0, 0), xycoords="axes fraction", xytext=(0, -26),
                     textcoords="offset points", ha="left", va="top",
                     fontsize=8.5, color="#898781")
-
     if owns_fig:
         fig.tight_layout()
     return fig

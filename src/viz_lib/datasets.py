@@ -1,13 +1,4 @@
-"""Access to the sample datasets bundled inside the package.
-
-CSVs live in ``viz_lib/data/`` and are read with :mod:`importlib.resources`,
-not relative file paths — so they load the same whether the project is run
-from a checkout or installed as a wheel.
-
-    import viz_lib
-    df = viz_lib.load_dataset("us_co2_by_fuel")
-    viz_lib.datasets.available()          # list what's bundled
-"""
+"""Access to the sample datasets bundled inside the package."""
 
 from __future__ import annotations
 
@@ -44,11 +35,5 @@ def load(name: str) -> "pd.DataFrame":
 
 
 def path(name: str):
-    """Return a context manager yielding a real filesystem path to the CSV.
-
-    Use when a tool needs an actual path rather than an open file::
-
-        with viz_lib.datasets.path("us_co2_by_fuel") as p:
-            ...
-    """
+    """Return a context manager yielding a real filesystem path to the CSV."""
     return resources.as_file(resources.files(_PKG).joinpath(_resolve(name)))

@@ -22,12 +22,7 @@ def _clean(y: Numeric) -> np.ndarray:
 
 
 def _normalize_panels(panels: PanelSpec) -> list[tuple[str, list[str]]]:
-    """Return an ordered list of ``(title, [series_names])``.
-
-    Accepts either a mapping ``{title: [names]}`` or a sequence of
-    ``{"title": ..., "series": [...]}`` dicts (the latter preserves order and
-    allows extra per-panel options later).
-    """
+    """Return an ordered list of ``(title, [series_names])``."""
     if isinstance(panels, Mapping):
         return [(title, list(names)) for title, names in panels.items()]
     out = []
@@ -51,61 +46,14 @@ def split_panel_line(
     figsize: tuple[float, float] | None = None,
     ax=None,
 ):
-    """Draw one metric across several series, split into panels.
-
-    This is the honest alternative to squashing wildly different magnitudes
-    onto one linear axis (where small series flatten to zero) or onto a log
-    axis (which lay readers misread). Each panel gets a y-scale that fits the
-    series it holds, so every trend stays legible.
-
-    Parameters
-    ----------
-    x
-        Shared x values (e.g. years) used for every series.
-    series
-        Mapping of ``series_name -> y_values``. Each y-sequence must align to
-        ``x``; use ``None`` for missing points (drawn as a gap).
-    panels
-        How to split the series. Either ``{panel_title: [series_names]}`` or a
-        list of ``{"title": ..., "series": [...]}`` dicts. Series may be
-        repeated across panels; series not listed in any panel are omitted.
-    orientation
-        ``"horizontal"`` (panels side by side) or ``"vertical"`` (stacked).
-    x_label, y_label, suptitle
-        Optional labels. ``y_label`` is applied to the leftmost / top panel.
-    direct_labels
-        If true (default), label each line at its right end and draw no legend
-        box — clearer than a legend for a handful of series. If false, draw a
-        per-panel legend instead.
-    sharey
-        Keep it ``False`` (the default and the whole point): a shared y-axis
-        would reintroduce the squashing this plot exists to avoid.
-    colors
-        ``None`` assigns the palette in order *within each panel* (panels are
-        disjoint groups, so a hue may recur across panels without ambiguity).
-        Pass a dict of ``{series_name: color}`` to override specific series —
-        useful to pin a shared entity to one identity across panels.
-    figsize
-        Figure size in inches. Defaults scale with the panel count.
-    ax
-        Optional array/list of pre-made Axes to draw into (must match the panel
-        count). When omitted, a new figure and axes are created.
-
-    Returns
-    -------
-    matplotlib.figure.Figure
-        The figure drawn (whether created here or inferred from ``ax``).
-    """
+    """Draw one metric across several series, split into panels."""
     apply_theme()
-
     panel_list = _normalize_panels(panels)
     n = len(panel_list)
     if n == 0:
         raise ValueError("panels is empty — nothing to draw")
-
     overrides = dict(colors) if isinstance(colors, Mapping) else {}
     x_arr = np.asarray(x, dtype=float)
-
     # --- axes ---------------------------------------------------------------
     owns_fig = ax is None
     if ax is not None:
@@ -123,7 +71,6 @@ def split_panel_line(
         else:
             raise ValueError("orientation must be 'horizontal' or 'vertical'")
         axes = np.atleast_1d(axes).ravel()
-
     # --- draw each panel ----------------------------------------------------
     for pi, (ax_i, (title, names)) in enumerate(zip(axes, panel_list)):
         end_labels = []  # (y_value, x_value, name, color) for de-collision
@@ -146,7 +93,6 @@ def split_panel_line(
                 if valid.size:
                     i = valid[-1]
                     end_labels.append((float(y[i]), float(x_arr[i]), name, color))
-
         if title:
             ax_i.set_title(title, loc="left", pad=8)
         if x_label:
@@ -162,7 +108,6 @@ def split_panel_line(
             _place_end_labels(ax_i, end_labels)
         else:
             ax_i.legend(loc="best")
-
     if suptitle:
         fig.suptitle(suptitle, x=0.02, ha="left", fontsize=14, fontweight="bold")
     if owns_fig:
@@ -171,13 +116,7 @@ def split_panel_line(
 
 
 def _place_end_labels(ax, labels):
-    """Draw right-end series labels, nudged apart so they never overlap.
-
-    Labels are anchored at each line's last point, then spread vertically:
-    entries closer than one line-height (in data units) are pushed up in turn.
-    This keeps direct labeling readable even when several lines finish at
-    similar values — the case a plain annotation would render as a pile-up.
-    """
+    """Draw right-end series labels, nudged apart so they never overlap."""
     if not labels:
         return
     lo, hi = ax.get_ylim()

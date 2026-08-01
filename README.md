@@ -125,10 +125,10 @@ Runnable examples live in `notebooks/` and `reports/`:
 | `notebooks/co2_bars.py` | two ranked bar charts (oil producers, major economies) |
 | `notebooks/us_co2_hero.py` | US CO₂ by fuel over time (stacked area) |
 
-**Colab presentation notebook** (run one graph per cell):
+**Colab presentation notebook** (run one cell at a time):
 
-- `notebooks/us_carbon_story_standalone.ipynb` — fully self-contained (library
-  code + data embedded); no install or upload needed.
+- `notebooks/us_carbon_story_github.ipynb` — installs `viz_lib` from GitHub,
+  then draws the two charts (datasets ship inside the package, nothing to upload).
 
 ## Project structure
 

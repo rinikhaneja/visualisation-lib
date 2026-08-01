@@ -1,17 +1,12 @@
 """Stacked area chart — composition (part-to-whole) over time."""
-
 from __future__ import annotations
-
 import numpy as np
 import matplotlib.pyplot as plt
-
 from .theme import apply_theme, series_color
-
 _MUTED = "#898781"
 _INK = "#0b0b0b"
 _SECOND = "#52514e"
 _SURFACE = "#fcfcfb"
-
 
 def stacked_area(
     df,
@@ -98,7 +93,6 @@ def stacked_area(
     if owns_fig:
         fig.tight_layout()
     return fig
-
 
 def _labels_at_right(ax, x_end, centers, top):
     """Place band labels at the right edge, spread so they don't overlap."""

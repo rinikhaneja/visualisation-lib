@@ -1,17 +1,11 @@
 """Access to the sample datasets bundled inside the package."""
-
 from __future__ import annotations
-
 from importlib import resources
-
 import pandas as pd
-
 _PKG = "viz_lib.data"
-
 
 def _resolve(name: str) -> str:
     return name if name.endswith(".csv") else name + ".csv"
-
 
 def available() -> list[str]:
     """Return the names (without ``.csv``) of the bundled datasets."""
@@ -20,7 +14,6 @@ def available() -> list[str]:
         for r in resources.files(_PKG).iterdir()
         if r.name.endswith(".csv")
     )
-
 
 def load(name: str) -> "pd.DataFrame":
     """Load a bundled dataset by name (``.csv`` optional) into a DataFrame."""
@@ -32,7 +25,6 @@ def load(name: str) -> "pd.DataFrame":
         raise FileNotFoundError(
             f"no bundled dataset {name!r}; available: {', '.join(available())}"
         )
-
 
 def path(name: str):
     """Return a context manager yielding a real filesystem path to the CSV."""

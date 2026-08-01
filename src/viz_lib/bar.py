@@ -1,23 +1,17 @@
 """Ranked horizontal bar chart, built to the Evergreen Data Viz Checklist."""
-
 from __future__ import annotations
-
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 from matplotlib.patches import Patch
-
 from .theme import apply_theme, smog_color, series_color
-
 _UP, _DOWN = "▲", "▼"  # ▲ ▼
 _SURFACE = "#fcfcfb"
-
 
 def _readable_ink(color) -> str:
     """Pick black or white text for a filled segment by its luminance."""
     r, g, b = mcolors.to_rgb(color)
     lum = 0.299 * r + 0.587 * g + 0.114 * b
     return "#0b0b0b" if lum > 0.6 else "#ffffff"
-
 
 def ranked_bar(
     df,
@@ -111,7 +105,6 @@ def ranked_bar(
     if owns_fig:
         fig.tight_layout()
     return fig
-
 
 def stacked_bar(
     df,

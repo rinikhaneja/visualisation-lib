@@ -1,25 +1,13 @@
-"""Hero chart: US CO2 emissions by fuel or industry, 1800-2024.
-
-The centerpiece of the US carbon story — a stacked area of absolute
-emissions with dated event annotations. Reads the bundled ``us_co2_by_fuel``
-and writes ``reports/figures/us_co2_hero.png``.
-"""
-
+"""Hero chart: US CO2 emissions by fuel or industry, 1800-2024."""
 from pathlib import Path
 import sys
-
 import pandas as pd
-
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
-
 from viz_lib import stacked_area, load_dataset  # noqa: E402
-
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "reports" / "figures" / "us_co2_hero.png"
-
 # bottom-to-top stacking order (coal is the historical base)
 FUELS = ["Coal", "Oil", "Gas", "Cement", "Flaring", "Other industry"]
-
 EVENTS = [
     {"year": 1918, "label": "1918\nWWI peak", "y": 0.55},
     {"year": 1932, "label": "1932\nGreat Depression", "y": 0.42},
@@ -29,13 +17,11 @@ EVENTS = [
     {"year": 2020, "label": "2020\nCOVID", "y": 0.62},
 ]
 
-
 def main() -> None:
     df = load_dataset("us_co2_by_fuel")
     # tonnes -> billion tonnes for readable labels
     for f in FUELS:
         df[f] = pd.to_numeric(df[f], errors="coerce") / 1e9
-
     fig = stacked_area(
         df, x="Year", series=FUELS,
         y_label="Billion tonnes CO₂ per year",
@@ -47,7 +33,6 @@ def main() -> None:
     OUT.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(OUT, dpi=150, bbox_inches="tight")
     print("wrote", OUT)
-
 
 if __name__ == "__main__":
     main()

@@ -34,7 +34,6 @@ Public API — six plotting functions plus helpers:
 | Function | Job | Example chart |
 | --- | --- | --- |
 | `ranked_bar` | rank a value across items | CO₂ per person by country |
-| `stacked_bar` | rank **and** break each bar into parts | per-capita CO₂ by source |
 | `stacked_area` | composition over time | US CO₂ by fuel, 1800–2024 |
 | `load_dataset` / `datasets` | load a bundled sample CSV | — |
 | `apply_theme`, `series_color`, `smog_color`, `PALETTE`, `SMOG` | the shared look | — |
@@ -85,25 +84,6 @@ fig = ranked_bar(
 `vmax` to two charts to share one honest color scale. See
 `notebooks/co2_bars.py` for the two-group CO₂ example.
 
-### `stacked_bar`
-
-A ranked, stacked horizontal bar — like `ranked_bar`, but each bar is split
-into parts (e.g. a country's emissions by fuel). Rows are ordered by total,
-the total is labelled at the bar end, and wide-enough segments are labelled in
-place. `value_fmt` accepts a callable for adaptive labels (e.g. `6.4 t` but
-`34 t`). See `notebooks/percapita_co2_by_source.py`.
-
-```python
-from viz_lib import stacked_bar, load_dataset
-
-df = load_dataset("percapita_co2_by_source")
-fig = stacked_bar(
-    df, category="Entity",
-    segments=["Coal", "Oil", "Gas", "Flaring", "Cement", "Other industry"],
-    title="Per capita CO₂ emissions by source, 2024",
-)
-```
-
 ### `stacked_area`
 
 Composition over time, with direct band labels and optional dated event
@@ -127,7 +107,6 @@ Runnable examples live in `notebooks/` and `reports/`:
 | File | What it produces |
 | --- | --- |
 | `notebooks/co2_bars.py` | two ranked bar charts (oil producers, major economies) |
-| `notebooks/percapita_co2_by_source.py` | per-capita CO₂ by source (stacked bar) |
 | `notebooks/us_co2_hero.py` | US CO₂ by fuel over time (stacked area) |
 
 **Colab presentation notebook** (run one graph per cell):

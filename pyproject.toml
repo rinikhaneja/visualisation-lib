@@ -3,13 +3,17 @@ requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "visualisation-lib"
+name = "viz-lib"
 version = "0.1.0"
-description = "A visualisation library organised with the Cookiecutter Data Science layout."
+description = "A small visualisation library (import name: viz_lib)."
 readme = "README.md"
 requires-python = ">=3.9"
 license = { text = "MIT" }
-dependencies = []
+dependencies = [
+    "matplotlib>=3.5",
+    "numpy>=1.21",
+    "pandas>=1.5",
+]
 
 [project.optional-dependencies]
 dev = [
@@ -19,3 +23,7 @@ dev = [
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+# ship the bundled sample datasets inside the wheel
+[tool.setuptools.package-data]
+viz_lib = ["data/*.csv"]

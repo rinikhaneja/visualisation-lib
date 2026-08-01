@@ -129,7 +129,6 @@ Runnable examples live in `notebooks/` and `reports/`:
 | `notebooks/co2_bars.py` | two ranked bar charts (oil producers, major economies) |
 | `notebooks/percapita_co2_by_source.py` | per-capita CO₂ by source (stacked bar) |
 | `notebooks/us_co2_hero.py` | US CO₂ by fuel over time (stacked area) |
-| `notebooks/us_supporting_panels.py` | per-capita GHG trend + cumulative-share ranking |
 
 **Colab presentation notebooks** (run one graph per cell):
 

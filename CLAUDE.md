@@ -5,9 +5,7 @@ Guidance for working in this repository.
 ## What this is
 
 `viz_lib` is a small, importable Python plotting library (built on matplotlib +
-pandas) plus a few scripts that use it to draw CO₂-emissions charts. It follows
-the [Cookiecutter Data Science](https://cookiecutter-data-science.drivendata.org/)
-layout.
+pandas) plus a few scripts that use it to draw CO₂-emissions charts.
 
 - **Install name** (pip/PyPI): `viz-lib`
 - **Import name** (in code): `viz_lib`
@@ -36,8 +34,9 @@ src/viz_lib/            # THE LIBRARY (importable, shipped in the wheel)
 notebooks/              # SCRIPTS that USE the library (not part of the package)
   co2_bars.py           #   two ranked bar charts
   us_co2_hero.py        #   US CO₂-by-fuel stacked area
-reports/figures/        # generated PNGs (gitignored)
-data/{raw,interim,...}  # Cookiecutter data dirs (contents gitignored)
+tests/                  # smoke tests for the scripts
+docs/images/            # PNGs embedded in the README gallery
+reports/figures/        # generated PNGs (gitignored; scripts create it on run)
 ```
 
 Keep the distinction: `src/viz_lib/` is the reusable library; `notebooks/` holds

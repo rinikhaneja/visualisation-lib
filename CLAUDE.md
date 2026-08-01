@@ -84,8 +84,8 @@ the sequential "smog" ramp (`smog_color`, used by `ranked_bar`).
   blank line between top-level defs. Preserve that style when editing.
 - `datasets.py` intentionally exposes only `load` (the earlier `available`/`path`
   helpers were removed as unused).
-- A standalone Colab notebook (`notebooks/us_carbon_story_standalone.ipynb`)
-  embeds the library source and data; regenerate it if the library changes
-  (its builder lives in the session scratchpad, not the repo).
+- The Colab notebook (`notebooks/us_carbon_story_github.ipynb`) installs the
+  library from GitHub (`@main`) and draws the two charts; regenerate it if the
+  library changes (its builder lives in the session scratchpad, not the repo).
 - Removed charts remain retrievable from git history (e.g. the by-source
   `stacked_bar` chart is in commit `24b3a59`).

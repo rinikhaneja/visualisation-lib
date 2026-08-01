@@ -25,8 +25,7 @@ def main() -> None:
     fig = stacked_bar(
         df, category="Entity", segments=SEGMENTS,
         colors=OWID_COLORS,
-        value_fmt=owid_tonnes,      # adaptive "6.4 t" / "34 t"
-        seg_label_min=0.05,         # label segments down to ~2 t (as OWID does)
+        value_fmt=owid_tonnes,      # adaptive "6.4 t" / "34 t" on the totals
         title="Per capita CO₂ emissions by source, 2024",
         note="Data source: Global Carbon Budget (2025); Population based on various "
              "sources (2024).  OurWorldinData.org/co2-and-greenhouse-gas-emissions | CC BY",

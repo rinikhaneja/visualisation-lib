@@ -1,16 +1,9 @@
 """Ranked horizontal bar chart, built to the Evergreen Data Viz Checklist."""
 from __future__ import annotations
 import matplotlib.pyplot as plt
-import matplotlib.colors as mcolors
 from matplotlib.patches import Patch
 from .theme import apply_theme, smog_color, series_color
 _SURFACE = "#fcfcfb"
-
-def _readable_ink(color) -> str:
-    """Pick black or white text for a filled segment by its luminance."""
-    r, g, b = mcolors.to_rgb(color)
-    lum = 0.299 * r + 0.587 * g + 0.114 * b
-    return "#0b0b0b" if lum > 0.6 else "#ffffff"
 
 def ranked_bar(
     df,
@@ -101,7 +94,6 @@ def stacked_bar(
     ascending: bool = False,
     unit: str = "",
     value_fmt: str = "{:.0f}",
-    seg_label_min: float = 0.08,
     title: str | None = None,
     subtitle: str | None = None,
     note: str | None = None,
@@ -128,8 +120,7 @@ def stacked_bar(
         fig, ax = plt.subplots(figsize=figsize)
     else:
         fig = ax.figure
-    # one formatter for both the in-segment labels and the bar-end total;
-    # pass a callable for adaptive formatting (e.g. "6.4 t" but "34 t")
+    # bar-end total formatter; pass a callable for adaptive formatting
     if callable(value_fmt):
         fmt = value_fmt
     else:
@@ -137,20 +128,14 @@ def stacked_bar(
             return f"{value_fmt.format(v)}{(' ' + unit) if unit else ''}"
     y = list(range(n))[::-1]
     max_total = float(data["_total"].max())
-    label_floor = max_total * seg_label_min
     for yi, (_, row) in zip(y, data.iterrows()):
         left = 0.0
         for s in segments:
             w = float(row[s])
             if w <= 0:
                 continue
-            color = seg_colors[s]
-            ax.barh(yi, w, left=left, height=0.7, color=color, zorder=3,
+            ax.barh(yi, w, left=left, height=0.7, color=seg_colors[s], zorder=3,
                     edgecolor=_SURFACE, linewidth=1.0)
-            if w >= label_floor:  # label only segments wide enough to fit
-                ax.annotate(fmt(w), xy=(left + w / 2, yi),
-                            ha="center", va="center", fontsize=9.5,
-                            fontweight="bold", color=_readable_ink(color), zorder=4)
             left += w
         # total at the bar end
         ax.annotate(fmt(left), xy=(left, yi), xytext=(6, 0),

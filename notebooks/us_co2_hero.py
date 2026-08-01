@@ -1,7 +1,7 @@
 """Hero chart: US CO2 emissions by fuel or industry, 1800-2024.
 
-The centerpiece of the US carbon-story poster — a stacked area of absolute
-emissions with dated event annotations. Reads ``data/raw/us_co2_by_fuel.csv``
+The centerpiece of the US carbon story — a stacked area of absolute
+emissions with dated event annotations. Reads the bundled ``us_co2_by_fuel``
 and writes ``reports/figures/us_co2_hero.png``.
 """
 

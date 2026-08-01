@@ -155,7 +155,6 @@ Runnable examples live in `notebooks/` and `reports/`:
 | `notebooks/percapita_co2_by_source.py` | per-capita CO₂ by source (stacked bar) |
 | `notebooks/us_co2_hero.py` | US CO₂ by fuel over time (stacked area) |
 | `notebooks/us_supporting_panels.py` | per-capita GHG trend + cumulative-share ranking |
-| `reports/us_carbon_poster.py` | the full one-page carbon-story poster |
 
 **Colab presentation notebooks** (run one graph per cell):
 

@@ -2,7 +2,7 @@
 
 Renders two standalone figures (reusing existing viz_lib functions):
 
-1. us_ghg_percapita.png  — US per-capita greenhouse-gas trend (split_panel_line)
+1. us_ghg_percapita.png  — US per-capita greenhouse-gas trend (line)
 2. us_cumulative_share.png — US share of global cumulative CO2 by fuel (ranked_bar)
 """
 

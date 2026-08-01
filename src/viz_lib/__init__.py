@@ -1,7 +1,6 @@
 """viz_lib — a small, consistent plotting library."""
 
 from .theme import PALETTE, SMOG, apply_theme, series_color, smog_color
-from .line import split_panel_line
 from .bar import ranked_bar, stacked_bar
 from .area import stacked_area
 from . import datasets
@@ -13,7 +12,6 @@ __all__ = [
     "apply_theme",
     "series_color",
     "smog_color",
-    "split_panel_line",
     "ranked_bar",
     "stacked_bar",
     "stacked_area",

@@ -36,7 +36,6 @@ Public API — six plotting functions plus helpers:
 | `ranked_bar` | rank a value across items | CO₂ per person by country |
 | `stacked_bar` | rank **and** break each bar into parts | per-capita CO₂ by source |
 | `stacked_area` | composition over time | US CO₂ by fuel, 1800–2024 |
-| `split_panel_line` | one metric, mixed-scale series in panels | oil exporters vs economies |
 | `load_dataset` / `datasets` | load a bundled sample CSV | — |
 | `apply_theme`, `series_color`, `smog_color`, `PALETTE`, `SMOG` | the shared look | — |
 
@@ -58,30 +57,6 @@ Plot functions live in `src/viz_lib/`. They share one contract: tidy data plus
 role keywords, an optional `ax` for composition, and a returned matplotlib
 object. A single theme (`viz_lib.theme`) gives every plot one identity using a
 validated, colorblind-safe palette.
-
-### `split_panel_line`
-
-Draws one metric across several series split into panels, each with its own
-y-scale — the honest way to show series whose magnitudes differ by 10×+ without
-a misread-prone log axis.
-
-```python
-from viz_lib import split_panel_line
-
-fig = split_panel_line(
-    x=years,
-    series={"Qatar": [...], "United States": [...], "India": [...]},
-    panels={
-        "Oil exporters":  ["Qatar", "Kuwait"],
-        "Major economies": ["United States", "India"],
-    },
-    x_label="Year",
-    y_label="Tonnes CO₂ per capita",
-)
-fig.savefig("reports/figures/co2_split_panel.png", dpi=150, bbox_inches="tight")
-```
-
-See `notebooks/example_split_panel.py` for a runnable example.
 
 ### `ranked_bar`
 

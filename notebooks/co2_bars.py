@@ -30,14 +30,11 @@ def main() -> None:
     # shared color scale so a shade means the same emissions in both charts
     plotted = subset(wide, OIL + ECON)
     vmax = plotted[f"y{LATEST}"].max()
-    world = wide.loc[wide["Entity"] == "World", f"y{LATEST}"].iloc[0]
-    src = "Source: Our World in Data, CO₂ emissions per capita (2024)."
     fig1 = ranked_bar(
         subset(wide, OIL), category="Entity", value=f"y{LATEST}",
-        vmax=vmax, unit="t", reference=world, reference_label="World average",
+        vmax=vmax, unit="t",
         title="A few small, oil-rich nations emit the most CO₂ per person",
         subtitle="Tonnes of CO₂ per person, 2024",
-        note=src,
     )
     fig1.savefig(OUT / "co2_oil_producers.png", dpi=150, bbox_inches="tight")
     fig2 = ranked_bar(
@@ -45,7 +42,6 @@ def main() -> None:
         vmax=vmax, unit="t",
         title="Among big economies, the US still emits the most per person",
         subtitle="Tonnes of CO₂ per person, 2024 — shaded on the same scale as oil producers",
-        note=src,
     )
     fig2.savefig(OUT / "co2_major_economies.png", dpi=150, bbox_inches="tight")
     print("wrote", OUT / "co2_oil_producers.png")

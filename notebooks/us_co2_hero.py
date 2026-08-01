@@ -19,7 +19,6 @@ def main() -> None:
         y_label="Billion tonnes CO₂ per year",
         title="A century of American carbon: coal gave way to oil and gas",
         subtitle="US CO₂ emissions by fuel or industry, 1800–2024 (billion tonnes per year)",
-        note="Source: Global Carbon Budget (2025) via Our World in Data.",
     )
     OUT.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(OUT, dpi=150, bbox_inches="tight")

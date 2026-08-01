@@ -16,7 +16,6 @@ def stacked_area(
     y_label: str | None = None,
     title: str | None = None,
     subtitle: str | None = None,
-    note: str | None = None,
     direct_labels: bool = True,
     ax=None,
     figsize: tuple[float, float] | None = None,
@@ -69,10 +68,6 @@ def stacked_area(
         ax.annotate(subtitle, xy=(0, 1.0), xycoords="axes fraction",
                     xytext=(0, 8), textcoords="offset points", ha="left",
                     va="bottom", fontsize=11.5, color=_SECOND)
-    if note:
-        ax.annotate(note, xy=(0, 0), xycoords="axes fraction", xytext=(0, -34),
-                    textcoords="offset points", ha="left", va="top",
-                    fontsize=8.5, color=_MUTED)
     if owns_fig:
         fig.tight_layout()
     return fig

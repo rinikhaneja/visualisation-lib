@@ -130,12 +130,10 @@ Runnable examples live in `notebooks/` and `reports/`:
 | `notebooks/percapita_co2_by_source.py` | per-capita CO₂ by source (stacked bar) |
 | `notebooks/us_co2_hero.py` | US CO₂ by fuel over time (stacked area) |
 
-**Colab presentation notebooks** (run one graph per cell):
+**Colab presentation notebook** (run one graph per cell):
 
 - `notebooks/us_carbon_story_standalone.ipynb` — fully self-contained (library
   code + data embedded); no install or upload needed.
-- `notebooks/us_carbon_story_upload.ipynb` — installs `viz_lib` from GitHub,
-  then reads three CSVs you upload.
 
 ## Project structure
 

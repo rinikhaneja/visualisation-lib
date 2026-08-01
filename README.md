@@ -38,6 +38,22 @@ Public API — six plotting functions plus helpers:
 | `load_dataset` / `datasets` | load a bundled sample CSV | — |
 | `apply_theme`, `series_color`, `smog_color`, `PALETTE`, `SMOG` | the shared look | — |
 
+## Gallery
+
+The three charts, rendered by the example scripts in `notebooks/`:
+
+**Oil producers — CO₂ per person**
+
+![CO₂ per person, oil producers](docs/images/co2_oil_producers.png)
+
+**Major economies — CO₂ per person** (same color scale as above)
+
+![CO₂ per person, major economies](docs/images/co2_major_economies.png)
+
+**A century of American carbon** — US CO₂ by fuel, 1800–2024
+
+![US CO₂ by fuel over time](docs/images/us_co2_hero.png)
+
 ### Bundled datasets
 
 Sample CSVs ship **inside** the package (`viz_lib/data/`) and are read with
